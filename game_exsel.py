@@ -5,6 +5,7 @@ import os
 import pygame 
 import random
 
+
 # BEWARE LONG LINES! THIS IS FOR THE HSR BATTLE SYSTEM!
 # voicelines and battle music
 script_dir = os.path.dirname(__file__)
