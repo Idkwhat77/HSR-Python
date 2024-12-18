@@ -947,7 +947,7 @@ Buffs = {self.buffs}
                     lmao("\"What?\"", color = "grey")
         
     def ultimate(self):
-        if self.energy == 90:
+        if self.energy == 0:
             natasha_ultimate1.play()
             lmao("\"..Just in time...\"", color = "grey")
             natasha_ultimate_healing = self.Max_HP * 0.1472 + 409.4
@@ -956,6 +956,8 @@ Buffs = {self.buffs}
             sound_effectfxs.play()
             for target in class_list: 
                 target.HP += natasha_ultimate_healing
+                if target.HP > target.Max_HP:
+                    target.HP = target.Max_HP
                 print(f"{target.name}'s recovered {natasha_ultimate_healing:.2f} HP.")
             self.energy -= 90
             self.energize(5)
