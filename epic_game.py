@@ -5,6 +5,7 @@ import os
 import pygame 
 import random
 
+init()
 # BEWARE LONG LINES! THIS IS FOR THE HSR BATTLE SYSTEM!
 # voicelines and battle music
 script_dir = os.path.dirname(__file__)
@@ -947,7 +948,7 @@ Buffs = {self.buffs}
                     lmao("\"What?\"", color = "grey")
         
     def ultimate(self):
-        if self.energy == 0:
+        if self.energy == 90:
             natasha_ultimate1.play()
             lmao("\"..Just in time...\"", color = "grey")
             natasha_ultimate_healing = self.Max_HP * 0.1472 + 409.4
@@ -984,7 +985,7 @@ class March_7th:
         self.energy = 0
         self.skill_counter = 0
         self.dmg_bonus = 0
-        self.buffs = {}
+        self.buffs = {"Counter": 2}
 
     def stats(self):
         print(f"""
@@ -1054,7 +1055,7 @@ Buffs = {self.buffs}
 
                     target.shield += self.march_shield_power
                     target.buffs["Shield (March 7th)"] = 4
-                        
+                    
                     if target.HP > target.Max_HP: 
                         target.HP = target.Max_HP
                     print(f"March 7th gave {target.name} a shield with {self.march_shield_power:.2f} HP.")
@@ -1113,6 +1114,9 @@ Buffs = {self.buffs}
             print(f"March 7th launched a counterattack, dealing {damage:.2f} HP.")
                     
     def skill_turn(self):
+        if not hasattr(self, 'skill_target') or self.skill_target is None:
+            return
+    
         target = self.skill_target
         if 'Shield (March 7th)' in target.buffs:
             if target.buffs["Shield (March 7th)"] > 0:
@@ -1272,10 +1276,10 @@ Input : """)
                 queue.pop(0)
                 queue.append("fu xuan")
             elif choose == "2":
-                fu_xuan.skill()
                 if skill_point == 0:
                     pass
                 else:
+                    fu_xuan.skill()
                     queue.pop(0)
                     queue.append("fu xuan")
             elif choose == "3":
@@ -1297,10 +1301,10 @@ Input : """)
                 queue.pop(0)
                 queue.append("dan heng")
             elif choose == "2":
-                danheng.skill()
                 if skill_point == 0:
                     pass
                 else:
+                    danheng.skill()
                     queue.pop(0)
                     queue.append("dan heng")
             elif choose == "3":
@@ -1322,10 +1326,10 @@ Input : """)
                 queue.pop(0)
                 queue.append("natasha")
             elif choose == "2":
-                natasha.skill()
                 if skill_point == 0:
                     pass
                 else:
+                    natasha.skill()
                     queue.pop(0)
                     queue.append("natasha")
             elif choose == "3":
@@ -1381,10 +1385,10 @@ Input : """)
                 queue.pop(0)
                 queue.append("tingyun")
             elif choose == "2":
-                tingyun.skill()
                 if skill_point == 0:
                     pass
                 else:
+                    tingyun.skill()
                     queue.pop(0)
                     queue.append("tingyun")
             elif choose == "3":
