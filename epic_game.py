@@ -41,6 +41,7 @@ class Character:
         self.dmg_bonus = 0
         self.element = element
         self.frozen = False
+        self.shield_value = 0
 
     def check_stats(self):
         clear()
@@ -557,7 +558,133 @@ class March7th(Character):
             self.talent_counter -= 1
             self.energize(10)
             check_others(game.march_7th, target)      
-                                                       
+
+class DanHeng(Character):
+    def __init__(self):
+        super().__init__("Dan Heng", 3000, 3000, 1000, 70, 150, 50, "Wind")
+        self.talent_counter = 0
+        
+    def energize(self, energy):
+        self.energy += energy
+        if self.energy > 100:
+            self.energy = 100
+        
+    def basic_attack(self, target):
+        clear()
+        
+        dan_heng_basicatk.play()
+        lmao("\"The time is now.\"", color = "green")
+        
+        damage = self.atk
+    
+        if self.dmg_bonus > 0:
+            damage += damage * self.dmg_bonus/100
+            
+        damage = damage * (1 - (target.defense / (target.defense + 200 + (10 * 90))))
+        
+        hit_multipliers = [0.45, 0.55]
+            
+        for multiplier in hit_multipliers:
+            hit_damage = damage * multiplier
+            crit_roll = random.randint(0, 100)
+            if crit_roll < self.crit_rate:
+                hit_damage += hit_damage * (self.crit_dmg/100)
+                n("CRIT!", "yellow")
+            target.hp -= hit_damage
+            n(f"{self.name} dealt {hit_damage:.0f} damage to {target.name}!")
+            sound_effectqqb.play()
+            time.sleep(0.5)
+                   
+        target.toughness -= 10
+        time.sleep(1)
+        self.energize(20)
+        check_others(game.dan_heng, target)
+        
+    def skill(self, target):
+        clear()
+        
+        dan_heng_skill.play()
+        lmao("\"Hmph.\"", color = "green")
+            
+        sound_effectqqb.play()
+        
+        damage = self.atk * 2.60
+    
+        if self.dmg_bonus > 0:
+            damage += damage * self.dmg_bonus/100
+            
+        damage = damage * (1 - (target.defense / (target.defense + 200 + (10 * 90))))
+        
+        hit_multipliers = [0.30, 0.15, 0.15, 0.40]
+            
+        for multiplier in hit_multipliers:
+            hit_damage = damage * multiplier
+            crit_roll = random.randint(0, 100)
+            if crit_roll < self.crit_rate:
+                hit_damage += hit_damage * (self.crit_dmg/100)
+                n("CRIT!", "yellow")
+            target.hp -= hit_damage
+            n(f"{self.name} dealt {hit_damage:.0f} damage to {target.name}!")
+            sound_effectqqb.play()
+            time.sleep(0.3)
+                   
+        target.toughness -= 10
+        time.sleep(1)
+        self.energize(30)
+        check_others(game.dan_heng, target)
+            
+    def ultimate(self, target):   
+        if self.energy == 100:
+            dan_heng_ultimate1.play()
+            lmao("\"The truth of life and death, revealed in an instant.\"", color = "green")
+            dan_heng_ultimate2.play()
+            lmao("\"This sanctuary... is but a vision... Tch.. Break!\"", color = "green")
+            dan_heng_ultimate2.stop()
+            
+            damage = self.atk * 4
+        
+            if self.dmg_bonus > 0:
+                damage += damage * self.dmg_bonus/100
+                
+            damage = damage * (1 - (target.defense / (target.defense + 200 + (10 * 90))))
+    
+            crit_roll = random.randint(0, 100)
+            if crit_roll < self.crit_rate:
+                damage += damage * (self.crit_dmg/100)
+                n("CRIT!", "yellow")
+            target.hp -= damage
+            n(f"{self.name} dealt {damage:.0f} damage to {target.name}!")
+            sound_effectqqb.play()
+            time.sleep(0.3)
+                
+            target.toughness -= 30
+            self.energy -= 100
+            time.sleep(1)
+            self.energize(5)
+            
+        else:
+            n("Not enough energy!", color = "red")   
+            time.sleep(1)
+            
+    def talent(self, target):
+        if self.talent_counter > 0:
+            damage = self.atk
+            
+            if self.dmg_bonus > 0:
+                damage += damage * self.dmg_bonus/100
+                
+            damage = damage * (1 - (target.defense / (target.defense + 200 + (10 * 90))))
+            
+            crit_roll = random.randint(0, 100)
+            if crit_roll < self.crit_rate:
+                damage += damage * (self.crit_dmg/100)
+                
+            target.hp -= damage
+            print(f"{self.name} dealt {damage:.0f} counter damage to {target.name}!")
+            self.talent_counter -= 1
+            self.energize(10)
+            check_others(game.march_7th, target)      
+
 class Enemy(Character):
     def __init__(self):
         super().__init__("Enemy", 10000, 1000, 1000, 0 ,0, 0, None)
@@ -669,6 +796,7 @@ class Game:
         self.tingyun = Tingyun()
         self.natasha = Natasha()
         self.march_7th = March7th()
+        self.dan_heng = DanHeng()
         self.enemy = Enemy()
         self.class_list = []
         self.queue = []
@@ -679,7 +807,7 @@ class Game:
             n("""=============================================
 Choose your party!
 Members Available: Fu Xuan, Tingyun, Natasha,
-March 7th
+March 7th, Dan Heng
 Type '0' to start battle. 
 Type '1' to empty team.
 =============================================""", color="yellow")
@@ -703,6 +831,9 @@ Type '1' to empty team.
             elif party_member == "march 7th" and "March 7th" not in self.queue:
                 self.queue.append("March 7th")
                 self.class_list.append(self.march_7th)
+            elif party_member == "dan heng" and "Dan Heng" not in self.queue:
+                self.queue.append("Dan Heng")
+                self.class_list.append(self.dan_heng)
             elif party_member == "0":
                 if len(self.queue) > 0:  # Ensure at least one member is selected
                     game.fight(self.queue)
@@ -924,7 +1055,54 @@ What should March 7th do?
                         print("Invalid action!")
                         time.sleep(1)
                         continue
+
+                elif who == "Dan Heng":
+                    n("""==========================
+What should Dan Heng do?
+==========================
+""", color = "green", end = "")
+                    Game.skill_point_show(skill_point)
+                    n(f"\nHP = {self.dan_heng.hp}, Enemy HP = {self.enemy.hp}\nEnergy = {self.dan_heng.energy} Talent Counter = {self.dan_heng.talent_counter}")
+                    if self.dan_heng.shield > 0:
+                        n(f"\nShield = {self.dan_heng.shield}")
+                    n("""
+1. Basic Attack
+2. Skill
+3. Ultimate
+4. Check Stats
+                """)
+                    action = input("Choose an action: ")
+                    if action == "1":
+                        self.dan_heng.basic_attack(self.enemy)
+                        if skill_point < 5:
+                            skill_point += 1
+                        check_buffs_after_turns(self.dan_heng)
+                        break
+                        
+                    elif action == "2":
+                        if skill_point < 1:
+                            print("Not enough skill points!")
+                            time.sleep(1)
+                            continue
+                        else:
+                            self.dan_heng.skill(self.enemy)
+                            skill_point -= 1
+                            check_buffs_after_turns(self.dan_heng)
+                            break
+
+                    elif action == "3":
+                        self.dan_heng.ultimate(self.enemy)
+                        continue
                     
+                    elif action == "4":
+                        self.dan_heng.check_stats()
+                        continue
+                    
+                    else:
+                        print("Invalid action!")
+                        time.sleep(1)
+                        continue
+
                 elif who == "Enemy":
                     if self.enemy.frozen == True:
                         n(f"{self.enemy.name} is frozen and cannot act!", color="cyan")
