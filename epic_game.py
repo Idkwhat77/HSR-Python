@@ -67,7 +67,7 @@ class FuXuan(Character):
         if self.energy > 135:
             self.energy = 135
         
-    def basic_attack(self, target):
+    def basic_attack(self, target, party):
         clear()
         fuxuan_basicatk = random.choice(fu_xuan_basicatk)
         if fuxuan_basicatk == fu_xuan_basicatk1:
@@ -96,7 +96,7 @@ class FuXuan(Character):
         self.energize(20)
         check_others(game.fu_xuan, target)
     
-    def skill(self, party):
+    def skill(self, target, party):
         clear()
         fuxuan_skill = random.choice(fu_xuan_skill)
         if fuxuan_skill == fu_xuan_skill1:
@@ -201,7 +201,7 @@ class Tingyun(Character):
         if self.energy > 130:
             self.energy = 130
         
-    def basic_attack(self, target):
+    def basic_attack(self, target, party):
         clear()
         tingyun_basicatk.play()
         lmao("\"..Chill out!\"", color = "light_magenta")
@@ -226,7 +226,7 @@ class Tingyun(Character):
         self.energize(20)
         self.talent(target)
     
-    def skill(self, party):
+    def skill(self, target, party):
         print("Choose a member by number: ")
         for i, character in enumerate(party, start=1):
             print(f"{i}. {character.name}")
@@ -238,9 +238,9 @@ class Tingyun(Character):
                 ty_skill = random.choice(tingyun_skill)
                 ty_skill.play()
                 if ty_skill == tingyun_skill1:
-                    lmao("\"Evils Begone~\"", color = "magenta")
+                    lmao("\"Evils Begone~\"", color = "light_magenta")
                 elif ty_skill == tingyun_skill2:
-                    lmao("\"All the best~\"", color = "magenta")
+                    lmao("\"All the best~\"", color = "light_magenta")
                     
                 target = party[choice]
                 
@@ -272,7 +272,7 @@ class Tingyun(Character):
                 lmao("\"Who?\"", color = "light_magenta")
                 time.sleep(1)
             
-    def ultimate(self, party):   
+    def ultimate(self, target, party):   
         if self.energy == 130:
             tingyun_ultimate1.play()
             lmao("\"A thousand wonders, to raise your spirits~\"", color = "light_magenta")
@@ -322,7 +322,7 @@ class Natasha(Character):
         if self.energy > 90:
             self.energy = 90
         
-    def basic_attack(self, target):
+    def basic_attack(self, target, party):
         clear()
         
         nat_basicatk = random.choice(natasha_basicatk)
@@ -356,7 +356,7 @@ class Natasha(Character):
         self.energize(20)
         check_others(game.natasha, target)
         
-    def skill(self, party):
+    def skill(self, target, party):
         print("Choose a member by number: ")
         for i, character in enumerate(party, start=1):
             print(f"{i}. {character.name}")
@@ -392,10 +392,10 @@ class Natasha(Character):
                 time.sleep(1)
                 break
             else:
-                lmao("\"Who?\"", color = "light_magenta")
+                lmao("\"Who?\"", color = "grey")
                 time.sleep(1)
             
-    def ultimate(self, party):   
+    def ultimate(self, target, party):   
         if self.energy == 90:
             natasha_ultimate1.play()
             lmao("\"..Just in time...\"", color = "grey")
@@ -436,7 +436,7 @@ class March7th(Character):
         if self.energy > 120:
             self.energy = 120
         
-    def basic_attack(self, target):
+    def basic_attack(self, target, party):
         clear()
         
         march7th_basicatk.play()
@@ -462,7 +462,7 @@ class March7th(Character):
         self.energize(20)
         check_others(game.march_7th, target)
         
-    def skill(self, party):
+    def skill(self, target, party):
         print("Choose a member by number: ")
         for i, character in enumerate(party, start=1):
             print(f"{i}. {character.name}")
@@ -498,7 +498,7 @@ class March7th(Character):
                 lmao("\"Who?\"", color = "cyan")
                 time.sleep(1)
             
-    def ultimate(self, target):   
+    def ultimate(self, target, party):   
         if self.energy == 120:
             march7th_ultimate1.play()
             lmao("\"Gotta try hard sometimes.\"", color = "cyan")
@@ -569,7 +569,7 @@ class DanHeng(Character):
         if self.energy > 100:
             self.energy = 100
         
-    def basic_attack(self, target):
+    def basic_attack(self, target, party):
         clear()
         
         dan_heng_basicatk.play()
@@ -600,7 +600,7 @@ class DanHeng(Character):
         self.energize(20)
         check_others(game.dan_heng, target)
         
-    def skill(self, target):
+    def skill(self, target, party):
         clear()
         
         dan_heng_skill.play()
@@ -633,7 +633,7 @@ class DanHeng(Character):
         self.energize(30)
         check_others(game.dan_heng, target)
             
-    def ultimate(self, target):   
+    def ultimate(self, target, party):   
         if self.energy == 100:
             dan_heng_ultimate1.play()
             lmao("\"The truth of life and death, revealed in an instant.\"", color = "green")
@@ -667,23 +667,189 @@ class DanHeng(Character):
             time.sleep(1)
             
     def talent(self, target):
-        if self.talent_counter > 0:
-            damage = self.atk
+        print("wip")    
+
+class Jingliu(Character):
+    def __init__(self):
+        super().__init__("Jingliu", 3000, 3000, 1000, 40, 170, 50, "Ice")
+        self.talent_counter = 0
+        self.special_state = False
+        
+    def energize(self, energy):
+        self.energy += energy
+        if self.energy > 140:
+            self.energy = 100
+        
+    def basic_attack(self, target, party):
+        clear()
+        
+        jingliu_basicatk.play()
+        lmao("\"Swordward!\"", color = "cyan")
+        
+        damage = self.atk
+    
+        if self.dmg_bonus > 0:
+            damage += damage * self.dmg_bonus/100
             
+        damage = damage * (1 - (target.defense / (target.defense + 200 + (10 * 90))))
+        
+        hit_multipliers = [0.30, 0.70]
+            
+        for multiplier in hit_multipliers:
+            hit_damage = damage * multiplier
+            crit_roll = random.randint(0, 100)
+            if crit_roll < self.crit_rate:
+                hit_damage += hit_damage * (self.crit_dmg/100)
+                n("CRIT!", "yellow")
+            target.hp -= hit_damage
+            n(f"{self.name} dealt {hit_damage:.0f} damage to {target.name}!")
+            sound_effectqqb.play()
+            time.sleep(0.5)
+                
+        target.toughness -= 10
+        time.sleep(1)
+        self.energize(20)
+        check_others(game.jingliu, target)
+            
+    def skill(self, target, party):
+        clear()
+        
+        jingliu_skill.play()
+        lmao("\"Fleeting light, roaring flood!\"", color = "cyan")
+            
+        sound_effectqqb.play()
+        
+        damage = self.atk * 2
+    
+        if self.dmg_bonus > 0:
+            damage += damage * self.dmg_bonus/100
+            
+        damage = damage * (1 - (target.defense / (target.defense + 200 + (10 * 90))))
+            
+        crit_roll = random.randint(0, 100)
+        if crit_roll < self.crit_rate:
+            damage += damage * (self.crit_dmg/100)
+            n("CRIT!", "yellow")
+            
+        target.hp -= damage
+        n(f"{self.name} dealt {damage:.0f} damage to {target.name}!")
+        sound_effectqqb.play()
+        time.sleep(0.3)
+                    
+        target.toughness -= 20
+        self.talent()
+        time.sleep(1)
+        self.energize(20)
+        check_others(game.jingliu, target)
+            
+    def enhanced_skill(self, target, party):
+        clear()
+        
+        jingliu_skill.play()
+        lmao("\"Fleeting light, roaring flood!\"", color = "cyan")
+            
+        if self.special_state == True :
+            accumulated_hp = 0
+            for char in party:
+                if char.name != "Jingliu" :
+                    accumulated_hp += char.max_hp * 0.04
+                    char.hp -= char.max_hp * 0.04
+                    if char.hp < 0 :
+                        char.hp = 1
+            original_atk = self.atk
+            self.atk += accumulated_hp * 5.4
+            if self.atk > original_atk * 1.8 :
+                self.atk = original_atk * 1.8
+                    
+        damage = self.atk * 2.5
+    
+        if self.dmg_bonus > 0:
+            damage += damage * self.dmg_bonus/100
+            
+        damage = damage * (1 - (target.defense / (target.defense + 200 + (10 * 90))))
+        
+        hit_multipliers = [0.10, 0.10, 0.10, 0.20, 0.50]
+            
+        for multiplier in hit_multipliers:
+            hit_damage = damage * multiplier
+            crit_roll = random.randint(0, 100)
+            if crit_roll < self.crit_rate:
+                hit_damage += hit_damage * (self.crit_dmg/100)
+                n("CRIT!", "yellow")
+            target.hp -= hit_damage
+            n(f"{self.name} dealt {hit_damage:.0f} damage to {target.name}!")
+            sound_effectqqb.play()
+            time.sleep(0.2)
+                   
+        target.toughness -= 20
+        self.atk = original_atk
+        self.talent()
+        time.sleep(1)
+        self.energize(30)
+        check_others(game.jingliu, target)
+        
+    def ultimate(self, target, party):   
+        if self.energy == 140:
+            jingliu_ultimate1.play()
+            lmao("\"All will be revealed.\"", color = "cyan")
+            jingliu_ultimate2.play()
+            lmao("\".. In lunar flame!\"", color = "cyan")
+            
+            if self.special_state == True :
+                accumulated_hp = 0
+                for char in party:
+                    if char.name != "Jingliu" :
+                        accumulated_hp += char.max_hp * 0.04
+                        char.hp -= char.max_hp * 0.04
+                        if char.hp < 0 :
+                            char.hp = 1
+                original_atk = self.atk
+                self.atk += accumulated_hp * 5.4
+                if self.atk > original_atk * 1.8 :
+                    self.atk = original_atk * 1.8
+                
+            damage = self.atk * 3
+        
             if self.dmg_bonus > 0:
                 damage += damage * self.dmg_bonus/100
                 
             damage = damage * (1 - (target.defense / (target.defense + 200 + (10 * 90))))
-            
+    
             crit_roll = random.randint(0, 100)
             if crit_roll < self.crit_rate:
                 damage += damage * (self.crit_dmg/100)
-                
+                n("CRIT!", "yellow")
             target.hp -= damage
-            print(f"{self.name} dealt {damage:.0f} counter damage to {target.name}!")
+            n(f"{self.name} dealt {damage:.0f} damage to {target.name}!")
+            sound_effectqqb.play()
+            time.sleep(0.3)
+                
+            target.toughness -= 20
+            self.energy -= 140
+            self.talent()
+            time.sleep(1)
+            self.energize(5)
+            
+        else:
+            n("Not enough energy!", color = "red")   
+            time.sleep(1)
+            
+    def talent(self):
+        if self.talent_counter < 3 and self.special_state == False:
+            n("Jingliu gained 1 stack of Syzygy.")
+            self.talent_counter += 1
+            if self.talent_counter == 2 :
+                n("Jingliu has entered the Special Transmigration state!")
+                self.special_state = True
+                self.crit_rate += 50
+                return
+            
+        if self.talent_counter > 0 and self.special_state == True:
             self.talent_counter -= 1
-            self.energize(10)
-            check_others(game.march_7th, target)      
+            if self.talent_counter == 0 :
+                n("Jingliu has exited the Special Transmigration state!")
+                self.special_state -= 1 
+                self.crit_rate -= 50
 
 class Enemy(Character):
     def __init__(self):
@@ -751,6 +917,7 @@ def check_buffs_before_turns(char):
         
 
 def check_buffs_after_turns(char):
+
     if 'Benediction' in char.buffs:
         char.buffs['Benediction'] -= 1
         if char.buffs['Benediction'] == 0:
@@ -778,6 +945,9 @@ def check_buffs_after_turns(char):
             del char.buffs['Shield (March 7th)']
             print(f"{char.name}'s shield by March 7th has expired.")
             time.sleep(1)   
+            
+    if char.name == "Fu Xuan" :
+        char.skill_turn_check()
 
 def check_others(char, target):
     if 'Benediction' in char.buffs:
@@ -797,6 +967,7 @@ class Game:
         self.natasha = Natasha()
         self.march_7th = March7th()
         self.dan_heng = DanHeng()
+        self.jingliu = Jingliu()
         self.enemy = Enemy()
         self.class_list = []
         self.queue = []
@@ -811,15 +982,17 @@ March 7th, Dan Heng
 Type '0' to start battle. 
 Type '1' to empty team.
 =============================================""", color="yellow")
-            if len(self.queue) >= 4:
-                print("Your party is full!")
-                time.sleep(0.5)
+            
             if self.queue:
                 for i, member in enumerate(self.queue, start = 1):
                     n(f"{i}. {member}")
                     
             party_member = input("Type their name: ").lower()
-            if party_member == "fu xuan" and "Fu Xuan" not in self.queue:
+            
+            if len(self.queue) >= 4:
+                print("Your party is full!")
+                time.sleep(0.5)
+            elif party_member == "fu xuan" and "Fu Xuan" not in self.queue:
                 self.queue.append("Fu Xuan")
                 self.class_list.append(self.fu_xuan)
             elif party_member == "tingyun" and "Tingyun" not in self.queue:
@@ -834,6 +1007,9 @@ Type '1' to empty team.
             elif party_member == "dan heng" and "Dan Heng" not in self.queue:
                 self.queue.append("Dan Heng")
                 self.class_list.append(self.dan_heng)
+            elif party_member == "jingliu" and "Jingliu" not in self.queue:
+                self.queue.append("Jingliu")
+                self.class_list.append(self.jingliu)
             elif party_member == "0":
                 if len(self.queue) > 0:  # Ensure at least one member is selected
                     game.fight(self.queue)
@@ -853,268 +1029,102 @@ Type '1' to empty team.
         n("SP : ", color = "blue", end = "")
         for i in range(skill_point):
             n("✧ ", color = "blue", end = "")
+
+    def _increase_skill_point(self, skill_point):
+        if skill_point < 5 :
+            skill_point += 1
+            return skill_point
+
+    def _use_skill(self, char, skill_point):
+        if skill_point < 1:
+            print("Not enough skill points!")
+            time.sleep(1)
+            return skill_point
+        else:
+            char.skill(self.class_list)
+            return skill_point - 1
+
+    def check_color(self, char) :
+        
+        char_element_color = {
+            "Ice": "cyan",
+            "Wind" : "green",
+            "Lightning" : "light_magenta",
+            "Physical" : "grey",
+            "Quantum" : "magenta",
+            "Fire" : "red",
+            "Imaginary" : "yellow"
+        }
+        
+        return char_element_color.get(char.element, "white")  
         
     def fight(self, queue):
+        epic_color = "none"
         skill_point = 3
-        queue = self.queue
         queue.append("Enemy")
+
         while True:
             clear()
             who = queue[0]
             current_char = getattr(self, who.lower().replace(" ", "_"))
             check_buffs_before_turns(current_char)
+
+            if current_char.name != "Enemy" :
+                action_map = {
+                    "1": current_char.basic_attack,
+                    "2": current_char.skill,
+                    "3": current_char.ultimate,
+                    "4": current_char.check_stats,
+                }
+
             while True:
+                epic_color = self.check_color(current_char)
                 print(queue)
-                if who == "Fu Xuan":
-                    n("""==========================
-What should Fu Xuan do?
-==========================
-""", color = "magenta", end = "")
-                    Game.skill_point_show(skill_point)
-                    n(f"\nHP = {self.fu_xuan.hp}, Enemy HP = {self.enemy.hp}\nEnergy = {self.fu_xuan.energy}, Talent Counter = {self.fu_xuan.talent_counter}")
-                    if self.fu_xuan.shield > 0:
-                        n(f"\nShield = {self.fu_xuan.shield}")
-                    n("""
-1. Basic Attack
-2. Skill
-3. Ultimate
-4. Check Stats
-            """)
-                    action = input("Choose an action: ")
-                    if action == "1":
-                        self.fu_xuan.basic_attack(self.enemy)
-                        if skill_point < 5:
-                            skill_point += 1
-                            check_buffs_after_turns(self.fu_xuan)
-                        self.fu_xuan.skill_turn_check()
-                        break
-                        
-                    elif action == "2":
-                        if skill_point < 1:
-                            print("Not enough skill points!")
-                            time.sleep(1)
-                            continue
-                        
-                        else:
-                            self.fu_xuan.skill(self.class_list)
-                            skill_point -= 1
-                            check_buffs_after_turns(self.fu_xuan)
-                            self.fu_xuan.skill_turn_check()
-                            break
-
-                    elif action == "3":
-                        self.fu_xuan.ultimate(self.class_list, self.enemy)
-                        continue
-                    
-                    elif action == "4":
-                        self.fu_xuan.check_stats()
-                        continue
-                    
-                    else:
-                        print("Invalid action!")
-                        time.sleep(1)
-                        continue
                 
-                elif who == "Tingyun":
-                    n("""==========================
-What should Tingyun do?
-==========================
-""", color = "light_magenta", end = "")
-                    Game.skill_point_show(skill_point)
-                    n(f"\nHP = {self.tingyun.hp}, Enemy HP = {self.enemy.hp}\nEnergy = {self.tingyun.energy}")
-                    if self.tingyun.shield > 0:
-                        n(f"\nShield = {self.tingyun.shield}")
-                    n("""
-1. Basic Attack
-2. Skill
-3. Ultimate
-4. Check Stats
-                """)
-                    action = input("Choose an action: ")
-                    if action == "1":
-                        self.tingyun.basic_attack(self.enemy)
-                        if skill_point < 5:
-                            skill_point += 1
-                        check_buffs_after_turns(self.tingyun)
-                        break
-                        
-                    elif action == "2":
-                        if skill_point < 1:
-                            print("Not enough skill points!")
-                            time.sleep(1)
-                            continue
-                        else:
-                            self.tingyun.skill(self.class_list)
-                            skill_point -= 1
-                            check_buffs_after_turns(self.tingyun)
-                            break
-
-                    elif action == "3":
-                        self.tingyun.ultimate(self.class_list)
-                        continue
-                    
-                    elif action == "4":
-                        self.tingyun.check_stats()
-                        continue
-                    
-                    else:
-                        print("Invalid action!")
-                        time.sleep(1)
-                        continue
-            
-                elif who == "Natasha":
-                    n("""==========================
-What should Natasha do?
-==========================
-""", color = "grey", end = "")
-                    Game.skill_point_show(skill_point)
-                    n(f"\nHP = {self.natasha.hp}, Enemy HP = {self.enemy.hp}\nEnergy = {self.natasha.energy}")
-                    if self.natasha.shield > 0:
-                        n(f"\nShield = {self.natasha.shield}")
-                    n("""
-1. Basic Attack
-2. Skill
-3. Ultimate
-4. Check Stats
-                """)
-                    action = input("Choose an action: ")
-                    if action == "1":
-                        self.natasha.basic_attack(self.enemy)
-                        if skill_point < 5:
-                            skill_point += 1
-                        check_buffs_after_turns(self.natasha)
-                        break
-                        
-                    elif action == "2":
-                        if skill_point < 1:
-                            print("Not enough skill points!")
-                            time.sleep(1)
-                            continue
-                        else:
-                            self.natasha.skill(self.class_list)
-                            skill_point -= 1
-                            check_buffs_after_turns(self.natasha)
-                            break
-
-                    elif action == "3":
-                        self.natasha.ultimate(self.class_list)
-                        continue
-                    
-                    elif action == "4":
-                        self.natasha.check_stats()
-                        continue
-                    
-                    else:
-                        print("Invalid action!")
-                        time.sleep(1)
-                        continue
-
-                elif who == "March 7th":
-                    n("""==========================
-What should March 7th do?
-==========================
-""", color = "cyan", end = "")
-                    Game.skill_point_show(skill_point)
-                    n(f"\nHP = {self.march_7th.hp}, Enemy HP = {self.enemy.hp}\nEnergy = {self.march_7th.energy} Talent Counter = {self.march_7th.talent_counter}")
-                    if self.march_7th.shield > 0:
-                        n(f"\nShield = {self.march_7th.shield}")
-                    n("""
-1. Basic Attack
-2. Skill
-3. Ultimate
-4. Check Stats
-                """)
-                    action = input("Choose an action: ")
-                    if action == "1":
-                        self.march_7th.basic_attack(self.enemy)
-                        if skill_point < 5:
-                            skill_point += 1
-                        check_buffs_after_turns(self.march_7th)
-                        break
-                        
-                    elif action == "2":
-                        if skill_point < 1:
-                            print("Not enough skill points!")
-                            time.sleep(1)
-                            continue
-                        else:
-                            self.march_7th.skill(self.class_list)
-                            skill_point -= 1
-                            check_buffs_after_turns(self.march_7th)
-                            break
-
-                    elif action == "3":
-                        self.march_7th.ultimate(self.enemy)
-                        continue
-                    
-                    elif action == "4":
-                        self.march_7th.check_stats()
-                        continue
-                    
-                    else:
-                        print("Invalid action!")
-                        time.sleep(1)
-                        continue
-
-                elif who == "Dan Heng":
-                    n("""==========================
-What should Dan Heng do?
-==========================
-""", color = "green", end = "")
-                    Game.skill_point_show(skill_point)
-                    n(f"\nHP = {self.dan_heng.hp}, Enemy HP = {self.enemy.hp}\nEnergy = {self.dan_heng.energy} Talent Counter = {self.dan_heng.talent_counter}")
-                    if self.dan_heng.shield > 0:
-                        n(f"\nShield = {self.dan_heng.shield}")
-                    n("""
-1. Basic Attack
-2. Skill
-3. Ultimate
-4. Check Stats
-                """)
-                    action = input("Choose an action: ")
-                    if action == "1":
-                        self.dan_heng.basic_attack(self.enemy)
-                        if skill_point < 5:
-                            skill_point += 1
-                        check_buffs_after_turns(self.dan_heng)
-                        break
-                        
-                    elif action == "2":
-                        if skill_point < 1:
-                            print("Not enough skill points!")
-                            time.sleep(1)
-                            continue
-                        else:
-                            self.dan_heng.skill(self.enemy)
-                            skill_point -= 1
-                            check_buffs_after_turns(self.dan_heng)
-                            break
-
-                    elif action == "3":
-                        self.dan_heng.ultimate(self.enemy)
-                        continue
-                    
-                    elif action == "4":
-                        self.dan_heng.check_stats()
-                        continue
-                    
-                    else:
-                        print("Invalid action!")
-                        time.sleep(1)
-                        continue
-
-                elif who == "Enemy":
-                    if self.enemy.frozen == True:
-                        n(f"{self.enemy.name} is frozen and cannot act!", color="cyan")
-                        self.enemy.frozen = False
-                        time.sleep(1)
-                        
-                    else:
-                        self.enemy.basic_attack()
-                    
+                if current_char.name == "Enemy" :
+                    current_char.basic_attack()
                     break
+                    
+                else :
+                    n(f"==========================\nWhat should {who} do?\n==========================\n", color = epic_color, end="")
+                    Game.skill_point_show(skill_point)
+                    n(f"\nHP = {current_char.hp}, Enemy HP = {self.enemy.hp}\nEnergy = {current_char.energy}")
 
+                    if current_char.shield > 0:
+                        n(f"\nShield = {current_char.shield}")
+
+                    n("\n1. Basic Attack\n2. Skill\n3. Ultimate\n4. Check Stats")
+                    action = input("Choose an action: ")
+
+                    if action in action_map:
+                        if action == "1" :
+                            if current_char.name == "Jingliu" and current_char.special_state == True:
+                                clear()
+                                n("Basic attack not available.", color = "red")  
+                            else :
+                                action_map[action](self.enemy, self.class_list)
+                                break
+                        
+                        elif action == "2" : 
+                            if current_char.name == "Jingliu" and current_char.special_state == True:
+                                current_char.enhanced_skill(self.enemy, self.class_list)
+                            else :
+                                action_map[action](self.enemy, self.class_list)
+                            break
+                            
+                        elif action == "3" :
+                            action_map[action](self.enemy, self.class_list)
+                            
+                        elif action == "4" :
+                            action_map[action]()
+                            pass
+                        
+                    else:
+                        print("Invalid action!")
+                        time.sleep(1)
+            check_buffs_after_turns(current_char)
             queue.append(queue.pop(0))
+
                 
 if __name__ == "__main__":
     game = Game()
