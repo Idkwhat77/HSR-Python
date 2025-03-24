@@ -221,11 +221,12 @@ class Tingyun(Character):
             
         target.hp -= damage
         print(f"{self.name} dealt {damage:.0f} damage to {target.name}!")
-        target.toughness -= 10
+        target.toughness -= 101
         time.sleep(1)
         self.energize(20)
         self.talent(target)
-    
+        check_others(game.tingyun, target)
+        
     def skill(self, target, party):
         print("Choose a member by number: ")
         for i, character in enumerate(party, start=1):
@@ -855,6 +856,8 @@ class Enemy(Character):
     def __init__(self):
         super().__init__("Enemy", 10000, 1000, 1000, 0 ,0, 0, None)
         self.toughness = 100
+        self.max_toughness = self.toughness
+        self.broken = False
                 
     def basic_attack(self):
         clear()
@@ -907,6 +910,17 @@ def check_buffs_before_turns(char):
         char.talent_counter = 2
         
     if char.name == "Enemy":
+        if 'Shock' in char.buffs:
+            shock_dot_damage = 3767.5533 * 2
+            n(f"{char.name} took {shock_dot_damage:.0f} frozen damage.")
+            char.buffs['Shock'] -= 1
+            if char.buffs['Shock'] == 0:
+                del char.buffs['Shock']
+            if char.broken == True :
+                char.broken = False
+                char.toughness = char.max_toughness
+            time.sleep(1)
+             
         if 'Freeze (March 7th)' in char.buffs:
             ice_dot_damage = game.march_7th.atk * 0.6
             n(f"{char.name} took {ice_dot_damage:.0f} frozen damage.")
@@ -925,6 +939,7 @@ def check_buffs_after_turns(char):
             if char.atk < char.original_atk:
                 char.atk = char.original_atk
             del char.buffs['Benediction']
+            game.tingyun.benediction = False
             print(f"{char.name}'s Benediction buff has expired.")
             time.sleep(1)
             
@@ -950,15 +965,22 @@ def check_buffs_after_turns(char):
         char.skill_turn_check()
 
 def check_others(char, target):
-    if 'Benediction' in char.buffs:
+    if 'Benediction' in char.buffs and char.name != "Tingyun":
         extra_damage = char.atk * 0.4
         target.hp -= extra_damage
         n(f"{char.name} dealt extra {extra_damage} damage to {target.name} with benediction.")
         time.sleep(1)
     
     if target.toughness <= 0:
-        if char.element == "Lightning":
-            print("Break damage later added.")
+        if char.element == "Lightning" and target.broken == False:
+            toughness_multiplier = 0.5 + target.max_toughness / 40
+            base_break_damage = 1 * 3767.5533 * toughness_multiplier
+            def_multiplier = 100/(100 * 1 + 100)
+            break_damage = base_break_damage * (1 + char.break_effect/100) * def_multiplier
+            n(f"{char.name} dealt {break_damage:.0f} break damage to {target.name}!")
+            target.buffs['Shock'] = 2
+            target.broken = True
+            time.sleep(1)
             
 class Game:
     def __init__(self):
@@ -978,7 +1000,7 @@ class Game:
             n("""=============================================
 Choose your party!
 Members Available: Fu Xuan, Tingyun, Natasha,
-March 7th, Dan Heng
+March 7th, Dan Heng, Jingliu
 Type '0' to start battle. 
 Type '1' to empty team.
 =============================================""", color="yellow")
